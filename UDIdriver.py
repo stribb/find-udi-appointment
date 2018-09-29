@@ -64,7 +64,7 @@ class UdiDriver(object):
         self.driver.quit()
 
 
-if __name__ == "__main__":
+def main():
     with open(sys.argv[1]) as fd:
         config = json.load(fd)
     latest = datetime.datetime.strptime(
@@ -77,3 +77,8 @@ if __name__ == "__main__":
         sys.exit(0)
     else:
         sys.exit(255)
+
+
+if __name__ == "__main__":
+    main()
+
