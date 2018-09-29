@@ -12,10 +12,8 @@ import datetime, json, time, re, sys
 
 
 class UdiDriver(object):
-    def __init__(self, username, password, latest):
-        self.username = username
-        self.password = password
-        self.latest = latest
+    def __init__(self, conf):
+        self.conf = conf
         options = webdriver.ChromeOptions()
         self.driver = webdriver.Chrome(chrome_options=options)
         self.driver.implicitly_wait(0)
@@ -29,9 +27,9 @@ class UdiDriver(object):
         driver.get("https://selfservice.udi.no/?epslanguage=en-GB")
         driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_ctl00_heading").click()
         driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtUsername").clear()
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtUsername").send_keys(self.username)
+        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtUsername").send_keys(self.conf["username"])
         driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtPassword").clear()
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtPassword").send_keys(self.password)
+        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtPassword").send_keys(self.conf["password"])
         driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_btnLocalLogin").click()
         driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_IconNavigationTile2_heading").click()
         driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_ApplicationOverview_applicationOverviewListView_ctrl0_btnBookAppointment").click()
@@ -54,7 +52,7 @@ class UdiDriver(object):
                 month_year =  driver.find_element_by_xpath('//*[@id="ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_pnlCalendarTop"]/div/div[3]/h2').text
                 found_date = datetime.datetime.strptime("%d %s" % (day, month_year), "%d %B %Y")
                 print found_date.strftime("%Y-%m-%d")
-                return found_date < self.latest
+                return found_date < self.conf["wait_if_earlier_than"]
             except NoSuchElementException as e:
                 print 'No appointment found: moving on'
                 driver.find_element_by_id('ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_btnNext').click()
@@ -69,8 +67,8 @@ def main():
         config = json.load(fd)
     latest = datetime.datetime.strptime(
         config["wait_if_earlier_than"], "%Y-%m-%d")
-    u = UdiDriver(config["username"], config["password"],
-            latest=latest)
+    config["wait_if_earlier_than"] = latest
+    u = UdiDriver(config)
     found_better_appt = u.run()
     if found_better_appt:
         time.sleep(3600)  # Wait for the user to book it
