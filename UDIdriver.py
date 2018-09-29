@@ -12,7 +12,7 @@ import datetime, json, time, re, sys
 
 
 class UdiDriver(object):
-    def setUp(self, username, password, latest):
+    def __init__(self, username, password, latest):
         self.username = username
         self.password = password
         self.latest = latest
@@ -60,24 +60,20 @@ class UdiDriver(object):
                 driver.find_element_by_id('ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_btnNext').click()
 
 
-    def tearDown(self):
+    def __del__(self):
         self.driver.quit()
 
 
 if __name__ == "__main__":
     with open(sys.argv[1]) as fd:
         config = json.load(fd)
-    u = UdiDriver()
     latest = datetime.datetime.strptime(
         config["wait_if_earlier_than"], "%Y-%m-%d")
-    u.setUp(config["username"], config["password"], latest=latest)
-    try:
-        found_better_appt = u.run()
-        if found_better_appt:
-            time.sleep(3600)  # Wait for the user to book it
-            sys.exit(0)
-        else:
-            sys.exit(255)
-    finally:
-        u.tearDown()
-    
+    u = UdiDriver(config["username"], config["password"],
+            latest=latest)
+    found_better_appt = u.run()
+    if found_better_appt:
+        time.sleep(3600)  # Wait for the user to book it
+        sys.exit(0)
+    else:
+        sys.exit(255)
