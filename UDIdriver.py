@@ -7,13 +7,15 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
+
 import datetime, json, time, re, sys
 
 
 class UdiDriver(object):
-    def setUp(self, username, password):
+    def setUp(self, username, password, latest):
         self.username = username
         self.password = password
+        self.latest = latest
         options = webdriver.ChromeOptions()
         self.driver = webdriver.Chrome(chrome_options=options)
         self.driver.implicitly_wait(0)
@@ -44,7 +46,7 @@ class UdiDriver(object):
             time.sleep(60)
             return False
 
-        # See if we have an open booking. If so, print its month.
+        # Keep looking for an open appointment till we find one.
         while True:
             try:
                 first_apt = driver.find_element_by_xpath("//td[@class='bookingCalendarBookedDay' or @class='bookingCalendarHalfBookedDay']/span[@class='dayNumber']")
@@ -52,7 +54,7 @@ class UdiDriver(object):
                 month_year =  driver.find_element_by_xpath('//*[@id="ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_pnlCalendarTop"]/div/div[3]/h2').text
                 found_date = datetime.datetime.strptime("%d %s" % (day, month_year), "%d %B %Y")
                 print found_date.strftime("%Y-%m-%d")
-                return found_date < datetime.datetime(year=2018, month=12, day=20)
+                return found_date < self.latest
             except NoSuchElementException as e:
                 print 'No appointment found: moving on'
                 driver.find_element_by_id('ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_btnNext').click()
@@ -66,7 +68,9 @@ if __name__ == "__main__":
     with open(sys.argv[1]) as fd:
         config = json.load(fd)
     u = UdiDriver()
-    u.setUp(config["username"], config["password"])
+    latest = datetime.datetime.strptime(
+        config["wait_if_earlier_than"], "%Y-%m-%d")
+    u.setUp(config["username"], config["password"], latest=latest)
     try:
         found_better_appt = u.run()
         if found_better_appt:
