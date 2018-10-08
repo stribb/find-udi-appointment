@@ -2,11 +2,7 @@
 #
 # -*- coding: utf-8 -*-
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import NoAlertPresentException
+from selenium.common import exceptions
 
 import datetime, json, time, re, sys
 
@@ -39,7 +35,7 @@ class UdiDriver(object):
         try:
             driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_bookingHeader_lblTitle")
             # print("We're at the calendar page!")
-        except NoSuchElementException as e:
+        except exceptions.NoSuchElementException:
             print('Not on the calendar page! Bombing out after a minute!')
             time.sleep(60)
             return False
@@ -53,7 +49,7 @@ class UdiDriver(object):
                 found_date = datetime.datetime.strptime("%d %s" % (day, month_year), "%d %B %Y")
                 print found_date.strftime("%Y-%m-%d")
                 return found_date < self.conf["wait_if_earlier_than"]
-            except NoSuchElementException as e:
+            except exceptions.NoSuchElementException:
                 print 'No appointment found: moving on'
                 driver.find_element_by_id('ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_btnNext').click()
 
