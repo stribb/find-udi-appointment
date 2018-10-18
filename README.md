@@ -2,6 +2,9 @@
 For people moving to Norway, we need an appointment with UDI. This script lets you find cancellations.
 
 # Installation
+
+First, download [Python 2](https://www.python.org/downloads/). It might work with Python 3 but this hasn't been tested. Then, load its dependencies:
+
 ```pip install -r requirements.txt```
 
 # Config file format
@@ -25,7 +28,7 @@ It's convenient to put it in ```config.json```. Example:
 # Usage
 You should make an initial appointment with UDI. Then set up the config file, as specified above. Run the script with:
 
-```./UDIdriver.py config.json```
+```UDIdriver.py config.json```
 
 It will wait if it finds an appointment earlier than its configured ```wait_if_earlier_than``` date. Otherwise it will terminate. The last line of the script's output will be the ISO date of the earliest appointment that it could find.
 
