@@ -13,7 +13,7 @@ First, download [Python 2](https://www.python.org/downloads/). It might work wit
 # Config file format
 The config file is a JSON file, with keys:
 
-- *username* &mdash; Your UDI username 
+- *username* &mdash; Your UDI username
 - *password* &mdash; Likewise, your UDI password
 - *wait_if_earlier_than* &mdash; An ISO formatted date, eg 2019-11-28. The script will pause if it finds an appointment before this.
 
@@ -22,9 +22,9 @@ It's convenient to put it in ```config.json```. Example:
 
 ```
 {
-    "username": "someone@somewhere.com",
-    "password": "hunter2"
-    "wait_if_earlier_than": "2019-02-03"
+	"username": "someone@somewhere.com",
+	"password": "hunter2",
+	"wait_if_earlier_than": "2019-02-03"
 }
 ```
 
