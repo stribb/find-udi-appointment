@@ -13,9 +13,6 @@ class UdiDriver(object):
         options = webdriver.ChromeOptions()
         self.driver = webdriver.Chrome(chrome_options=options)
         self.driver.implicitly_wait(0)
-        self.base_url = "https://www.katalon.com/"
-        self.verificationErrors = []
-        self.accept_next_alert = True
         
     def run(self):
         driver = self.driver
@@ -49,7 +46,7 @@ class UdiDriver(object):
             try:
                 first_apt = driver.find_element_by_xpath("//td[@class='bookingCalendarBookedDay' or @class='bookingCalendarHalfBookedDay']/span[@class='dayNumber']")
                 day = int(first_apt.text)
-                month_year =  driver.find_element_by_xpath('//*[@id="ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_pnlCalendarTop"]/div/div[3]/h2').text
+                month_year = driver.find_element_by_xpath('//*[@id="ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_appointmentCalendar_pnlCalendarTop"]/div/div[3]/h2').text
                 found_date = datetime.datetime.strptime("%d %s" % (day, month_year), "%d %B %Y")
                 print found_date.strftime("%Y-%m-%d")
                 return found_date < self.conf["wait_if_earlier_than"]
@@ -62,13 +59,17 @@ class UdiDriver(object):
         self.driver.quit()
 
 
-def main():
-    with open(sys.argv[1]) as fd:
+def main(driver=None, cfg_file=None):
+    if not driver:
+        driver = UdiDriver
+    if not cfg_file:
+        cfg_file = open(sys.argv[1])
+    with cfg_file as fd:
         config = json.load(fd)
     latest = datetime.datetime.strptime(
         config["wait_if_earlier_than"], "%Y-%m-%d")
     config["wait_if_earlier_than"] = latest
-    u = UdiDriver(config)
+    u = driver(config)
     found_better_appt = u.run()
     if found_better_appt:
         time.sleep(3600)  # Wait for the user to book it
