@@ -19,14 +19,18 @@ class UdiDriver(object):
         
     def run(self):
         driver = self.driver
-
         driver.get("https://selfservice.udi.no/?epslanguage=en-GB")
-        driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_ctl00_heading").click()
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtUsername").clear()
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtUsername").send_keys(self.conf["username"])
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtPassword").clear()
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtPassword").send_keys(self.conf["password"])
-        driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_btnLocalLogin").click()
+        driver.find_element_by_id(
+            "ctl00_BodyRegion_PageRegion_MainRegion_ctl00_heading").click()
+        username_elt = driver.find_element_by_id(
+            "ctl00_BodyRegion_LoginResponiveBox_txtUsername")
+        username_elt.clear()
+        username_elt.send_keys(self.conf["username"])
+        password_elt = driver.find_element_by_id("ctl00_BodyRegion_LoginResponiveBox_txtPassword")
+        password_elt.clear()
+        password_elt.send_keys(self.conf["password"])
+        driver.find_element_by_id(
+            "ctl00_BodyRegion_LoginResponiveBox_btnLocalLogin").click()
         driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_IconNavigationTile2_heading").click()
         driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_ApplicationOverview_applicationOverviewListView_ctrl0_btnBookAppointment").click()
         driver.find_element_by_id("ctl00_PageRegion_MainContentRegion_ViewControl_spnReceiptAndBooking_BookingSummaryInfo_btnChangeBooking").click()
@@ -75,4 +79,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
