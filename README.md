@@ -16,6 +16,7 @@ The config file is a JSON file, with keys:
 - *username* &mdash; Your UDI username
 - *password* &mdash; Likewise, your UDI password
 - *wait_if_earlier_than* &mdash; An ISO formatted date, eg 2019-11-28. The script will pause if it finds an appointment before this.
+- (optional) *sleep_on_success*: How many seconds to hold the browser open. Defaults to 3600.
 
 
 It's convenient to put it in ```config.json```. Example:
