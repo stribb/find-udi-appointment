@@ -72,11 +72,12 @@ def main(driver=None, cfg_file=None):
     u = driver(config)
     found_better_appt = u.run()
     if found_better_appt:
-        time.sleep(3600)  # Wait for the user to book it
-        sys.exit(0)
+        # Wait for the user to book it
+        time.sleep(config.get('sleep_on_success', 3600))
+        return 0
     else:
-        sys.exit(255)
+        return 255
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
