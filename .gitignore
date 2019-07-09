@@ -1,10 +1,9 @@
-config.json
+config.json*
 *~
-bin/**
-include/**
-lib/**
 pip-selfcheck.json
 .Python
 .envrc
 *.pyc
 __pycache__/**
+/.Rhistory
+.cache/**
