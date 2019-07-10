@@ -13,7 +13,7 @@ class UdiDriver(object):
         options = webdriver.ChromeOptions()
         self.driver = webdriver.Chrome(chrome_options=options)
         self.driver.implicitly_wait(0)
-        
+
     def run(self):
         driver = self.driver
         driver.get("https://selfservice.udi.no/?epslanguage=en-GB")
@@ -28,10 +28,15 @@ class UdiDriver(object):
         password_elt.send_keys(self.conf["password"])
         driver.find_element_by_id(
             "ctl00_BodyRegion_LoginResponiveBox_btnLocalLogin").click()
-        driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_IconNavigationTile2_heading").click()
+        try:
+            driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_IconNavigationTile2_heading").click()
+        except exceptions.NoSuchElementException:
+            print('Incorrect username and/or password')
+            input('Press enter to continue...')
+            return False
         driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_ApplicationOverview_applicationOverviewListView_ctrl0_btnBookAppointment").click()
         driver.find_element_by_id("ctl00_PageRegion_MainContentRegion_ViewControl_spnReceiptAndBooking_BookingSummaryInfo_btnChangeBooking").click()
-    
+
         # We should be on the calendar page. Check this.
         try:
             driver.find_element_by_id("ctl00_BodyRegion_PageRegion_MainRegion_appointmentReservation_bookingHeader_lblTitle")
